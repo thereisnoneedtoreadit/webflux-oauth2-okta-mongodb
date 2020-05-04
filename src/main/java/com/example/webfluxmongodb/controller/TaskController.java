@@ -1,7 +1,8 @@
 package com.example.webfluxmongodb.controller;
 
-import com.example.webfluxmongodb.model.dto.Task;
-import com.example.webfluxmongodb.repository.TaskRepository;
+import com.example.webfluxmongodb.model.dto.CreateTaskRequest;
+import com.example.webfluxmongodb.model.entity.Task;
+import com.example.webfluxmongodb.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +14,18 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     @PostMapping
     @ResponseBody
-    public Mono<Task> create(@RequestBody Task task) {
-        return taskRepository.save(task);
+    public Mono<Task> create(@RequestBody CreateTaskRequest request) {
+        return taskService.createTask(request);
     }
 
     @GetMapping
     @ResponseBody
     public Flux<Task> getAll() {
-        return taskRepository.findAll();
+        return taskService.getAllTasks();
     }
 
 }
