@@ -1,5 +1,6 @@
 package com.example.webfluxmongodb.service;
 
+import com.example.webfluxmongodb.exception.NotFoundException;
 import com.example.webfluxmongodb.model.dto.CreateTaskRequest;
 import com.example.webfluxmongodb.model.entity.Task;
 import com.example.webfluxmongodb.repository.TaskRepository;
@@ -20,6 +21,23 @@ public class TaskService {
 
     public Flux<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public Mono<Task> getOne(String id) {
+        return taskRepository.findById(id)
+                .switchIfEmpty(Mono.error(NotFoundException::new));
+    }
+
+    public Mono<Task> updateTask(Task task) {
+        if (task.getId() == null || task.getId().isEmpty())
+            throw new IllegalArgumentException("id can't be null or empty");
+        return taskRepository.save(task);
+    }
+
+    public Mono<Void> deleteTask(String id) {
+        return taskRepository.findById(id)
+                .switchIfEmpty(Mono.error(NotFoundException::new))
+                .flatMap(taskRepository::delete);
     }
 
 }
