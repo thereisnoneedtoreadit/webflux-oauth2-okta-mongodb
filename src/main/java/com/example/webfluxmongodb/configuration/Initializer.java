@@ -2,12 +2,14 @@ package com.example.webfluxmongodb.configuration;
 
 import com.example.webfluxmongodb.model.entity.Task;
 import com.example.webfluxmongodb.repository.TaskRepository;
+import com.example.webfluxmongodb.sender.MailSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
 
+import java.io.IOException;
 import java.util.Date;
 
 @Configuration
@@ -15,7 +17,9 @@ import java.util.Date;
 public class Initializer {
 
     @Bean
-    ApplicationRunner init(TaskRepository repository) {
+    ApplicationRunner init(TaskRepository repository) throws IOException {
+
+        new MailSender().send();
 
         Object[][] data = {
                 {"task1", "desc1", "1588603894077"},
@@ -30,7 +34,7 @@ public class Initializer {
                             Flux
                                     .just(data)
                                     .map(array -> {
-                                        return new Task((String) array[0], (String) array[1], new Date(Long.valueOf(array[2].toString())));
+                                        return new Task((String) array[0], (String) array[1], new Date(Long.parseLong(array[2].toString())), "username");
                                     })
                                     .flatMap(repository::save)
                     )

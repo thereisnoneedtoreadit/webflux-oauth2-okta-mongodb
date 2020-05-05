@@ -1,0 +1,24 @@
+oidc:
+  issuer-uri: https://dev-774537.okta.com/oauth2/default
+  client-id: 0oaazjpgpskYPjS0p4x6
+  client-secret: CV8JYqOKO2XaV_vYf7g9s9XOCaVtGhZKvn4hVn7r
+
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          okta:
+            issuer-uri: ${oidc.issuer-uri}
+        registration:
+          okta:
+            client-id: ${oidc.client-id}
+            client-secret: ${oidc.client-secret}
+      resourceserver:
+        jwt:
+          issuer-uri: ${oidc.issuer-uri}
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: taskDb

@@ -24,11 +24,13 @@ public class Task {
     private String description;
     private Date creationDate;
     private Date performanceDate;
+    private String user;
 
-    public Task(String name, String description, Date performanceDate) {
+    public Task(String name, String description, Date performanceDate, String user) {
         this.name = name;
         this.description = description;
         this.creationDate = new Date();
         this.performanceDate = performanceDate;
+        this.user = user;
     }
 }

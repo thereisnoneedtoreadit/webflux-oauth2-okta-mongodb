@@ -5,6 +5,8 @@ import com.example.webfluxmongodb.model.entity.Task;
 import com.example.webfluxmongodb.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -18,18 +20,17 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public Mono<ResponseEntity<Task>> create(@RequestBody CreateTaskRequest request) {
-        return taskService.createTask(request)
+    public Mono<ResponseEntity<Task>> create(@AuthenticationPrincipal OidcUser user, @RequestBody CreateTaskRequest request) {
+        return taskService.createTask(request, user)
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping
-    public Mono<ResponseEntity<List<Task>>> getAll() {
-        return taskService.getAllTasks()
+    public Mono<ResponseEntity<List<Task>>> getAll(@AuthenticationPrincipal OidcUser user) {
+        return taskService.getAllTasks(user)
                 .collectList()
                 .map(ResponseEntity::ok);
     }
-
     @GetMapping("/{id}")
     public Mono<ResponseEntity<Task>> getOne(@PathVariable String id) {
         return taskService.getOne(id)

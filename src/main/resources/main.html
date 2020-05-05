@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MainPage</title>
+    <style type="text/css">
+        .hidden1 {
+            display: none;
+        }
+
+        .hidden2 {
+            display: none;
+        }
+
+        .hidden3 {
+            display: none;
+        }
+
+        .hidden4 {
+            display: none;
+        }
+    </style>
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+    var RestGet = function () {
+        $.ajax({
+            type: 'GET',
+            url: '/tasks',
+            dataType: 'json',
+            async: true,
+            success: function (data) {
+                var len = data.length;
+                var txt = "";
+                for (var i = 0; i < len; i++) {
+                    var dataid = data[i].id;
+                    txt += "<tr>" +
+                        "<td>" + data[i].id + "</td>" +
+                        "<td>" + data[i].name + "</td>" +
+                        "<td>" + data[i].brand + "</td>" +
+                        "<td>" + data[i].price + "</td>" +
+                        "<td>" + data[i].quantity + "</td>" +
+                        "</tr>";
+                    txt += '<td><input type="button" value="Delete" onclick="removeProduct(' + "\'" + dataid + "\'" + ')"/></td>';
+                    txt += '<td><input type="button" value="Edit" onclick="UnhideHidden3(' + "\'" + dataid + "\'" + ')"/></td>';
+                }
+                if (txt != "") {
+                    $("#table tbody").detach();
+                    $("#table").append(txt).removeClass("hidden1");
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.status + ' ' + jqXHR.responseText);
+            }
+        });
+    };
+
+    function processForm(form) {
+        var inputs = form.getElementsByTagName("input");
+        // parse text field values into an object
+        var textValues = {};
+        for (var x = 0; x < inputs.length; x++) {
+            if (inputs[x].type != "text") {
+                // ignore anything which is NOT a text field
+                continue;
+            }
+
+            textValues[inputs[x].name] = inputs[x].value;
+        }
+
+        // textValues['formname'] contains value of first input
+        // textValues['formbrand'] contains value of second input
+
+        var JSONObject = {
+            name: textValues['formname'],
+            brand: textValues['formbrand'],
+            price: textValues['formprice'],
+            quantity: textValues['formquantity']
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/tasks',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(JSONObject),
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                alert('Новый продукт добавлен!');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.status + ' ' + jqXHR.responseText);
+            }
+        });
+    }
+
+    function removeProduct(dataid) {
+        $.ajax({
+            type: 'DELETE',
+            url: '/tasks/' + dataid,
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                Alert('Продукт удалён!');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.status + ' ' + jqXHR.responseText);
+            }
+        });
+        window.location.reload();
+    }
+
+    function UnhideHidden2() {
+        var element = document.getElementById("addnew");
+        element.classList.remove("hidden2");
+    }
+
+    var globDataId;
+
+    function UnhideHidden3(dataid) {
+        var element = document.getElementById("editprod");
+        element.classList.remove("hidden3");
+        globDataId = dataid;
+    }
+
+    function editForm(form) {
+        var inputs = form.getElementsByTagName("input");
+        // parse text field values into an object
+        var textValues = {};
+        for (var x = 0; x < inputs.length; x++) {
+            if (inputs[x].type != "text") {
+                // ignore anything which is NOT a text field
+                continue;
+            }
+            textValues[inputs[x].name] = inputs[x].value;
+        }
+        var JSONObject = {
+            name: textValues['formname1'],
+            brand: textValues['formbrand1'],
+            price: textValues['formprice1'],
+            quantity: textValues['formquantity1']
+        };
+
+        $.ajax({
+            type: 'PUT',
+            url: '/product/posts/' + globDataId,
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(JSONObject),
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                alert('Продукт отредактирован!');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.status + ' ' + jqXHR.responseText);
+            }
+        });
+    }
+
+    function findForm(form) {
+        var inputs = form.getElementsByTagName("input");
+        // parse text field values into an object
+        var textValues = {};
+        for (var x = 0; x < inputs.length; x++) {
+            if (inputs[x].type != "text") {
+                // ignore anything which is NOT a text field
+                continue;
+            }
+            textValues[inputs[x].name] = inputs[x].value;
+        }
+        var nameOrBrand = textValues['findByNameOrBrand'];
+
+        $.ajax({
+            type: 'GET',
+            url: '/product/finds/' + nameOrBrand,
+            dataType: 'json',
+            async: true,
+            success: function (data) {
+                var len = data.length;
+                var txt = "";
+                for (var i = 0; i < len; i++) {
+                    var dataid = data[i].id;
+                    txt += "<tr>" +
+                        "<td>" + data[i].id + "</td>" +
+                        "<td>" + data[i].name + "</td>" +
+                        "<td>" + data[i].brand + "</td>" +
+                        "<td>" + data[i].price + "</td>" +
+                        "<td>" + data[i].quantity + "</td>" +
+                        "</tr>";
+                    txt += '<td><input type="button" value="Remove" onclick="removeProduct(' + dataid + ')"/></td>';
+                    txt += '<td><input type="button" value="Edit" onclick="UnhideHidden3(' + dataid + ')"/></td>';
+                }
+                if (txt != "") {
+                    $("#table11 tbody").detach();
+                    $("#table11").append(txt).removeClass("hidden4");
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.status + ' ' + jqXHR.responseText);
+            }
+        });
+    }
+</script>
+<body>
+
+<form id="findprod" method="get" onsubmit="findForm(this); return false;">
+    <p><b>Enter name or brand here for search:</b><br>
+        <input type="text" size="40" name="findByNameOrBrand">
+    </p>
+    <p><input type="submit" value="Get results">
+</form>
+
+<table id="table11" class="hidden4">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>brand</th>
+        <th>price</th>
+        <th>quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+
+    </tr>
+    </tbody>
+</table>
+<br/>
+<button type="button" onclick="RestGet()">GET all products</button>
+<table id="table" class="hidden1">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>brand</th>
+        <th>price</th>
+        <th>quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+
+    </tr>
+    </tbody>
+</table>
+
+<form id="editprod" name="editprod1" onsubmit="return editForm(this)" class="hidden3">
+    <div>Edit product form</div>
+    <p><b>Name:</b><br>
+        <input type="text" size="40" name="formname1">
+    </p>
+    <p><b>Brand:</b><br>
+        <input type="text" size="40" name="formbrand1">
+    </p>
+    <p><b>Price:</b><br>
+        <input type="text" size="40" name="formprice1">
+    </p>
+    <p><b>Quantity:</b><br>
+        <input type="text" size="40" name="formquantity1">
+    </p>
+    <p><input type="submit" value="Edit">
+        <input type="reset" value="Clean"></p>
+</form>
+<br/>
+<br/>
+<button type="button" onclick="UnhideHidden2()">ADD new product</button>
+<form id="addnew" name="test" onsubmit="return processForm(this)" class="hidden2">
+    <div>Add new product form</div>
+    <p><b>Name:</b><br>
+        <input type="text" size="40" name="formname">
+    </p>
+    <p><b>Brand:</b><br>
+        <input type="text" size="40" name="formbrand">
+    </p>
+    <p><b>Price:</b><br>
+        <input type="text" size="40" name="formprice">
+    </p>
+    <p><b>Quantity:</b><br>
+        <input type="text" size="40" name="formquantity">
+    </p>
+    <p><input type="submit" value="Add">
+        <input type="reset" value="Clean"></p>
+</form>
+
+<br/>
+<br/>
+<br/>
+
+<form action="/leftovers">
+    <button type="submit">See all leftovers</button>
+</form>
+
+</body>
+</html>
