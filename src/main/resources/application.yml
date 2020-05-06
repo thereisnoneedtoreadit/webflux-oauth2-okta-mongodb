@@ -22,3 +22,8 @@ spring:
       host: localhost
       port: 27017
       database: taskDb
+
+mail:
+  sender:
+    from:
+      address: 'mpsh96@gmail.com'

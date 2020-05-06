@@ -1,31 +1,29 @@
 package com.example.webfluxmongodb.sender;
 
 import com.sendgrid.*;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
+@Component
+@Slf4j
 public class MailSender {
 
-    public void send() throws IOException {
-        Email from = new Email("mpsh96@gmail.com");
-        String subject = "Sending with SendGrid is Fun";
-        Email to = new Email("alyoyona.b@gmail.com ");
-        Content content = new Content("text/plain", "and easy to do anywhere, even with Java");
-        Mail mail = new Mail(from, subject, to, content);
+    @Value("${mail.sender.from.address}")
+    private String fromAddress;
 
-        SendGrid sg = new SendGrid("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");
+    @SneakyThrows
+    public void send(String to, String subject, String content) {
+        SendGrid sg = new SendGrid(System.getenv("mail_key"));
         Request request = new Request();
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-            Response response = sg.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
-        } catch (IOException ex) {
-            throw ex;
-        }
+        request.setMethod(Method.POST);
+        request.setEndpoint("mail/send");
+        request.setBody(new Mail(new Email(fromAddress), subject, new Email(to), new Content("text/plain", content)).build());
+        Response response = sg.api(request);
+        log.info("Mail sended. Status code: {}", response.getStatusCode());
+        log.debug("Response body: {}, response headers: {}", response.getBody(), response.getHeaders());
     }
+
 }
 

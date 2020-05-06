@@ -4,6 +4,7 @@ import com.example.webfluxmongodb.model.entity.Task;
 import com.example.webfluxmongodb.repository.TaskRepository;
 import com.example.webfluxmongodb.sender.MailSender;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,10 +17,16 @@ import java.util.Date;
 @Slf4j
 public class Initializer {
 
+    @Autowired
+    MailSender mailSender;
+
     @Bean
     ApplicationRunner init(TaskRepository repository) throws IOException {
 
-        new MailSender().send();
+        mailSender.send(
+                "alyoyona.b@gmail.com",
+                "Sending with SendGrid is Fun",
+                "and easy to do anywhere, even with Java");
 
         Object[][] data = {
                 {"task1", "desc1", "1588603894077"},
