@@ -2,7 +2,6 @@ package com.example.webfluxmongodb.service;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.Props;
 import com.example.webfluxmongodb.exception.NotFoundException;
 import com.example.webfluxmongodb.model.actor.NotificationActor;
 import com.example.webfluxmongodb.model.dto.CreateTaskRequest;
@@ -27,8 +26,7 @@ public class TaskService {
 
     public Mono<Task> createTask(CreateTaskRequest request, OidcUser user) {
         ActorRef notificationActor = actorSystem.actorOf(
-                Props.create(
-                        NotificationActor.class,
+                NotificationActor.props(
                         user.getEmail(), request.getName(), request.getDescription(), request.getPerformanceDate(), mailSender
                 )
         );
