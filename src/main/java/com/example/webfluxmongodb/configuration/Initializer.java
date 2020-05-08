@@ -25,8 +25,8 @@ public class Initializer {
 
         mailSender.send(
                 "alyoyona.b@gmail.com",
-                "Sending with SendGrid is Fun",
-                "and easy to do anywhere, even with Java");
+                "test",
+                "test");
 
         Object[][] data = {
                 {"task1", "desc1", "1588603894077"},
