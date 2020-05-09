@@ -1,6 +1,6 @@
 ## Organizer & notification sender
 
-Сервис, принимающий и хранящий новый задачи пользователя с функциями получения/удаления/редактирования.
+Сервис, принимающий и хранящий задачи пользователя с функциями получения/удаления/редактирования.
 По наступлению даты, указанной пользователем в задаче, отсылается письмо на почту данного пользователя.
 
 Регистрация и авторизация сделаны через recourse-сервис Okta, протокол Oauth2.
@@ -12,7 +12,7 @@
 
 _____________________________________________________________________________________________________________
 
-A service that accepts and stores new user tasks with the functions of receiving / deleting / editing.
+A service that accepts and stores user tasks with the functions of receiving / deleting / editing.
 Upon the date specified by the user in the task, a letter is sent to the mail of this user.
 
 Registration and authorization are done through the Okta recourse service, Oauth2 protocol.
